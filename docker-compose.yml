@@ -5,7 +5,17 @@ services:
     build: .
     container_name: lapoker-api
     restart: always
-    ports:
-      - "8001:8000"
     env_file:
       - .env
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.lapoker-api.rule=Host(`api.lapoker.com.br`)"
+      - "traefik.http.routers.lapoker-api.entrypoints=websecure"
+      - "traefik.http.routers.lapoker-api.tls.certresolver=mytlschallenge"
+      - "traefik.http.services.lapoker-api.loadbalancer.server.port=8000"
+    networks:
+      - n8n_default
+
+networks:
+  n8n_default:
+    external: true
