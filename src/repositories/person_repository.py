@@ -16,11 +16,3 @@ class PersonRepository:
         self.db.commit()
         self.db.refresh(db_person)
         return db_person
-
-    def update(self, person: Person, update_data: dict) -> Person:
-        for key, value in update_data.items():
-            if value is not None:
-                setattr(person, key, value)
-        self.db.commit()
-        self.db.refresh(person)
-        return person

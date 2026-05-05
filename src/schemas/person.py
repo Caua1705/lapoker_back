@@ -12,13 +12,6 @@ class PersonCreate(BaseModel):
     email: str | None = None
 
 
-class PersonUpdate(BaseModel):
-    """Schema for updating a person."""
-    name: str | None = None
-    instagram: str | None = None
-    email: str | None = None
-
-
 class PersonResponse(BaseModel):
     """Schema for person response."""
     id: UUID

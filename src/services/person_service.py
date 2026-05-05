@@ -9,7 +9,7 @@ class PersonService:
         self.db = db
         self.person_repo = PersonRepository(db)
 
-    def create_or_update_person_by_phone(
+    def get_or_create_person_by_phone(
         self,
         name: str,
         phone: str,
@@ -19,12 +19,7 @@ class PersonService:
         person = self.person_repo.get_by_phone(phone)
 
         if person:
-            update_data = {
-                "name": name,
-                "instagram": instagram,
-                "email": email,
-            }
-            return self.person_repo.update(person, update_data)
+            return person
 
         person_data = {
             "name": name,

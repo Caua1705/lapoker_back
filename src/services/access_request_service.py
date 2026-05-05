@@ -24,8 +24,8 @@ class AccessRequestService:
                 registration_status="none",
             )
 
-        # 2. Create or update the person using phone as the main identifier
-        person = self.person_service.create_or_update_person_by_phone(
+        # 2. Get or create the person using phone as the main identifier
+        person = self.person_service.get_or_create_person_by_phone(
             name=request_in.name,
             phone=request_in.phone,
             instagram=request_in.instagram,
