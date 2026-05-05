@@ -11,6 +11,7 @@ from src.db.base import Base
 
 class Person(Base):
     __tablename__ = "people"
+    __table_args__ = {"schema": "lapoker"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),

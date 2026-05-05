@@ -15,6 +15,7 @@ class EventRegistration(Base):
 
     __table_args__ = (
         UniqueConstraint("person_id", "event_id", name="uq_person_event"),
+        {"schema": "lapoker"},
     )
 
     id: Mapped[uuid.UUID] = mapped_column(
@@ -25,13 +26,13 @@ class EventRegistration(Base):
 
     person_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("people.id", ondelete="RESTRICT"),
+        ForeignKey("lapoker.people.id", ondelete="RESTRICT"),
         nullable=False,
     )
 
     event_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
-        ForeignKey("events.id", ondelete="RESTRICT"),
+        ForeignKey("lapoker.events.id", ondelete="RESTRICT"),
         nullable=False,
     )
 

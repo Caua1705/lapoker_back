@@ -12,6 +12,7 @@ from src.db.base import Base
 
 class Event(Base):
     __tablename__ = "events"
+    __table_args__ = {"schema": "lapoker"}
 
     id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
