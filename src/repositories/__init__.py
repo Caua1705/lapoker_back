@@ -1,0 +1,3 @@
+from src.repositories.person_repository import PersonRepository
+from src.repositories.event_repository import EventRepository
+from src.repositories.event_registration_repository import EventRegistrationRepository
