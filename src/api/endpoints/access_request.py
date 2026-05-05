@@ -14,7 +14,7 @@ router = APIRouter()
     summary="Submit access request",
     description="Public endpoint for the Alá Poker landing page form.",
 )
-def submit_access_request(
+def create_access_request(
     request_in: AccessRequestCreate,
     db: Session = Depends(get_db),
 ):
