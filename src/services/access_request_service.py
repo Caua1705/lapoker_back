@@ -4,6 +4,7 @@ from src.schemas.access_request import AccessRequestCreate, AccessRequestRespons
 from src.services.person_service import PersonService
 from src.services.event_service import EventService
 from src.services.event_registration_service import EventRegistrationService
+from src.services.n8n_webhook_service import N8nWebhookService
 
 
 class AccessRequestService:
@@ -12,6 +13,7 @@ class AccessRequestService:
         self.person_service = PersonService(db)
         self.event_service = EventService(db)
         self.registration_service = EventRegistrationService(db)
+        self.webhook_service = N8nWebhookService()
 
     def submit_access_request(self, request_in: AccessRequestCreate) -> AccessRequestResponse:
         # 1. Find the current active event
@@ -50,6 +52,18 @@ class AccessRequestService:
             person_id=person.id,
             event_id=active_event.id,
         )
+
+        # 5. Notify n8n (non-blocking – webhook failures must not affect the response)
+        self.webhook_service.trigger_access_request({
+            "name": person.name,
+            "phone": person.phone,
+            "instagram": person.instagram,
+            "email": person.email,
+            "registration_id": str(registration.id),
+            "event_id": str(active_event.id),
+            "event_name": active_event.name,
+            "registration_status": registration.status,
+        })
 
         return AccessRequestResponse(
             success=True,
