@@ -14,4 +14,4 @@ if not DATABASE_URL:
 # =========================
 # N8N WEBHOOKS
 # =========================
-N8N_WEBHOOK_URL = os.getenv("N8N_WEBHOOK_URL")
+N8N_ACCESS_REQUEST_WEBHOOK_URL = os.getenv("N8N_ACCESS_REQUEST_WEBHOOK_URL")

@@ -2,13 +2,13 @@ import logging
 
 import requests
 
-from src.core.config import N8N_WEBHOOK_URL
+from src.core.config import N8N_ACCESS_REQUEST_WEBHOOK_URL
 
 logger = logging.getLogger(__name__)
 
 
 class N8nWebhookService:
-    WEBHOOK_URL = N8N_WEBHOOK_URL
+    WEBHOOK_URL = N8N_ACCESS_REQUEST_WEBHOOK_URL
     TIMEOUT_SECONDS = 5
 
     def trigger_access_request(self, payload: dict) -> None:
@@ -18,7 +18,7 @@ class N8nWebhookService:
         """
         if not self.WEBHOOK_URL:
             logger.warning(
-                "N8N_WEBHOOK_URL is not set – skipping webhook."
+                "N8N_ACCESS_REQUEST_WEBHOOK_URL is not set – skipping webhook."
             )
             return
 

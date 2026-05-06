@@ -41,6 +41,19 @@ class AccessRequestService:
         )
 
         if existing:
+            # Notify n8n about the duplicate attempt
+            self.webhook_service.trigger_access_request({
+                "name": person.name,
+                "phone": person.phone,
+                "instagram": person.instagram,
+                "email": person.email,
+                "registration_id": str(existing.id),
+                "event_id": str(active_event.id),
+                "event_name": active_event.name,
+                "registration_status": existing.status,
+                "already_exists": True,
+            })
+
             return AccessRequestResponse(
                 success=True,
                 message="Sua solicitação já foi recebida.",
@@ -63,6 +76,7 @@ class AccessRequestService:
             "event_id": str(active_event.id),
             "event_name": active_event.name,
             "registration_status": registration.status,
+            "already_exists": False,
         })
 
         return AccessRequestResponse(
