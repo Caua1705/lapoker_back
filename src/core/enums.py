@@ -12,8 +12,3 @@ class RegistrationStatus(str, Enum):
     PENDING = "pending"
     APPROVED = "approved"
     REJECTED = "rejected"
-    WAITLIST = "waitlist"
-    CONFIRMED = "confirmed"
-    ATTENDED = "attended"
-    NO_SHOW = "no_show"
-    CANCELLED = "cancelled"
