@@ -1,5 +1,6 @@
 import logging
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from src.schemas.access_request import AccessRequestCreate, AccessRequestResponse
@@ -34,15 +35,20 @@ class AccessRequestService:
 
             return AccessRequestResponse(
                 success=False,
+                code="no_active_event",
                 message="Nenhum evento ativo no momento.",
+                name=None,
+                email=None,
+                delivery_method="email",
                 registration_status="none",
             )
 
-        person = self.person_service.get_or_create_person_by_phone(
+        email = str(request_in.email).strip().lower()
+        person = self.person_service.get_or_create_person_by_email(
             name=request_in.name,
+            email=email,
             phone=request_in.phone,
             instagram=request_in.instagram,
-            email=request_in.email,
         )
 
         existing = self.registration_service.get_existing_registration(
@@ -58,23 +64,44 @@ class AccessRequestService:
                 existing.status,
             )
 
-            self._send_emails_safely(
-                name=request_in.name,
-                email=str(request_in.email) if request_in.email else None,
-                phone=request_in.phone,
-                instagram=request_in.instagram,
-            )
-
             return AccessRequestResponse(
-                success=True,
-                message="Sua solicitação já foi recebida.",
+                success=False,
+                code="already_registered",
+                message="Este e-mail já está cadastrado para este evento.",
+                name=person.name,
+                email=person.email,
+                delivery_method="email",
                 registration_status=existing.status,
             )
 
-        registration = self.registration_service.create_pending_registration(
-            person_id=person.id,
-            event_id=active_event.id,
-        )
+        try:
+            registration = self.registration_service.create_pending_registration(
+                person_id=person.id,
+                event_id=active_event.id,
+            )
+        except IntegrityError:
+            self.db.rollback()
+            existing = self.registration_service.get_existing_registration(
+                person_id=person.id,
+                event_id=active_event.id,
+            )
+            if existing:
+                logger.info(
+                    "[access-request] Registration already existed after integrity error. person_id=%s event_id=%s status=%s",
+                    person.id,
+                    active_event.id,
+                    existing.status,
+                )
+                return AccessRequestResponse(
+                    success=False,
+                    code="already_registered",
+                    message="Este e-mail já está cadastrado para este evento.",
+                    name=person.name,
+                    email=person.email,
+                    delivery_method="email",
+                    registration_status=existing.status,
+                )
+            raise
 
         logger.info(
             "[access-request] New registration created. person_id=%s event_id=%s registration_id=%s status=%s",
@@ -85,15 +112,19 @@ class AccessRequestService:
         )
 
         self._send_emails_safely(
-            name=request_in.name,
-            email=str(request_in.email) if request_in.email else None,
+            name=person.name,
+            email=email,
             phone=request_in.phone,
             instagram=request_in.instagram,
         )
 
         return AccessRequestResponse(
             success=True,
-            message="Solicitação recebida com sucesso.",
+            code="created",
+            message="Convite enviado com sucesso.",
+            name=person.name,
+            email=email,
+            delivery_method="email",
             registration_status=registration.status,
         )
 

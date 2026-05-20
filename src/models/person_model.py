@@ -24,9 +24,9 @@ class Person(Base):
         nullable=False,
     )
 
-    phone: Mapped[str] = mapped_column(
+    phone: Mapped[str | None] = mapped_column(
         String(30),
-        nullable=False,
+        nullable=True,
         unique=True,
     )
 
@@ -35,9 +35,10 @@ class Person(Base):
         nullable=True,
     )
 
-    email: Mapped[str | None] = mapped_column(
+    email: Mapped[str] = mapped_column(
         String(255),
-        nullable=True,
+        nullable=False,
+        unique=True,
     )
 
     created_at: Mapped[datetime] = mapped_column(

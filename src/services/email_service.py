@@ -20,27 +20,27 @@ EMAIL_TEMPLATES_DIR = Path(__file__).resolve().parents[1] / "templates" / "email
 
 
 class EmailService:
-    SUBJECT_ACCESS_CONFIRMATION = "Confirmação recebida"
-    SUBJECT_ADMIN_NOTIFICATION = "Nova solicitação recebida"
+    SUBJECT_ACCESS_CONFIRMATION = "Convite Alá Poker"
+    SUBJECT_ADMIN_NOTIFICATION = "Novo cadastro de convite"
 
-    def send_access_confirmation_email(
+    def send_access_invitation_email(
         self,
         to_email: str | None,
         name: str | None = None,
     ) -> None:
         """
-        Sends a confirmation email to the person who submitted the form.
+        Sends the invitation email to the person who submitted the form.
 
         This method never raises exceptions to avoid breaking the main form flow.
         """
-        logger.info("[email] Starting user confirmation email flow. to_email=%s", to_email)
+        logger.info("[email] Starting user invitation email flow. to_email=%s", to_email)
 
         if not to_email:
-            logger.warning("[email] No user email provided. Skipping user confirmation email.")
+            logger.warning("[email] No user email provided. Skipping user invitation email.")
             return
 
         if not self._is_smtp_config_valid():
-            logger.warning("[email] SMTP configuration incomplete. Skipping user confirmation email.")
+            logger.warning("[email] SMTP configuration incomplete. Skipping user invitation email.")
             return
 
         try:
@@ -57,16 +57,16 @@ class EmailService:
             message["To"] = to_email
 
             message.set_content(
-                "Recebemos sua confirmação. Confira as informações no conteúdo em HTML deste e-mail."
+                "Enviamos seu convite. Confira os detalhes no conteúdo em HTML deste e-mail."
             )
             message.add_alternative(html, subtype="html")
 
             self._send(message)
 
-            logger.info("[email] User confirmation email sent successfully to %s", to_email)
+            logger.info("[email] User invitation email sent successfully to %s", to_email)
 
         except Exception:
-            logger.exception("[email] User confirmation email failed.")
+            logger.exception("[email] User invitation email failed.")
 
     def send_admin_access_notification(
         self,
@@ -102,7 +102,7 @@ class EmailService:
             message["To"] = ADMIN_NOTIFICATION_EMAIL
 
             body = f"""
-Nova solicitação recebida.
+Novo cadastro de convite.
 
 Nome: {safe_name}
 Email: {safe_email}
@@ -115,7 +115,7 @@ Instagram: {safe_instagram}
 <html lang="pt-BR">
   <body style="margin:0; padding:24px; background:#090909; font-family:Arial, sans-serif; color:#f6efe2;">
     <div style="max-width:560px; margin:0 auto; border:1px solid #b79358; border-radius:14px; padding:24px; background:#111;">
-      <h2 style="margin:0 0 18px; color:#fff8e8;">Nova solicitação recebida</h2>
+      <h2 style="margin:0 0 18px; color:#fff8e8;">Novo cadastro de convite</h2>
 
       <p style="margin:0 0 10px;"><strong style="color:#b79358;">Nome:</strong> {escape(safe_name)}</p>
       <p style="margin:0 0 10px;"><strong style="color:#b79358;">Email:</strong> {escape(safe_email)}</p>

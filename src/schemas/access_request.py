@@ -6,13 +6,15 @@ from pydantic import BaseModel, EmailStr, Field, field_validator
 class AccessRequestCreate(BaseModel):
     """Schema for the public access request form."""
     name: str = Field(..., min_length=2, max_length=120)
-    phone: str
+    email: EmailStr
+    phone: str | None = None
     instagram: str | None = None
-    email: EmailStr | None = None
 
     @field_validator("phone")
     @classmethod
-    def validate_phone(cls, v: str) -> str:
+    def validate_phone(cls, v: str | None) -> str | None:
+        if v is None:
+            return v
         digits = re.sub(r"\D", "", v)
         if not 10 <= len(digits) <= 15:
             raise ValueError("Phone must have between 10 and 15 digits.")
@@ -32,5 +34,9 @@ class AccessRequestCreate(BaseModel):
 class AccessRequestResponse(BaseModel):
     """Schema for the access request response."""
     success: bool
+    code: str | None = None
     message: str
-    registration_status: str
+    name: str | None = None
+    email: str | None = None
+    delivery_method: str | None = None
+    registration_status: str | None = None
