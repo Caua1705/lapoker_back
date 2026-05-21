@@ -20,7 +20,7 @@ EMAIL_TEMPLATES_DIR = Path(__file__).resolve().parents[1] / "templates" / "email
 
 
 class EmailService:
-    SUBJECT_ACCESS_CONFIRMATION = "Convite Alá Poker"
+    SUBJECT_ACCESS_CONFIRMATION = " Lá Poker"
     SUBJECT_ADMIN_NOTIFICATION = "Novo cadastro de convite"
 
     def send_access_invitation_email(
